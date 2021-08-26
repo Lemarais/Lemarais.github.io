@@ -23,11 +23,13 @@ Simulator Launcher
  - For the purpose of developing simulators that it can be utilized for optimization policy, simulation results should be known before the job is executed. To do this, I implemented SimulationLauncher, which runs independently of JobLauncher and can output simulation results.
   
 Plan Simulator
-- It additionally received Node Configuration argument compared to Job execution.
-- It 
+- It creates virtual nodes with Node Configuration, which is received through Simulator Launcher. 
+- It manages the size of data transferred between tasks, and trigger simulation for each Executor Simulator.
+- It Compute the data processed by each task for a certain period of time while the allocated resources are fixed for one iteration, and the iteration is repeated until the amount of data processed by each tasks achieved balance.  
 
 Executor Simulator
-- 
+- It is virtual node to simulate the execution of task
+- It Calculates the time it takes to process one tuple and returns the number of tuples processed when duration is inputted from the Plan Simulator. 
 
 ## 2. What code got merged
 
@@ -38,6 +40,7 @@ There are no merged code, yet.
 ### Metric
 
 Pull request is created, and I'm trying to address feedback. I think it can be merged soon. 
+
 [[NEMO-483]](https://github.com/apache/incubator-nemo/pull/317)
 
 ### Simulator
