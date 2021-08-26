@@ -19,15 +19,22 @@ There are two main part.
 - With reference to "flink", I have implemented that source vertex can periodically generate latencymarks and record traverse time up to each task. 
 
 ### Simulator
-Simulator Launcher
- - For the purpose of developing simulators that it can be utilized for optimization policy, simulation results should be known before the job is executed. To do this, I implemented SimulationLauncher, which runs independently of JobLauncher and can output simulation results.
-  
-Plan Simulator
-- It creates virtual nodes with Node Configuration, which is received through Simulator Launcher. 
-- It manages the size of data transferred between tasks, and trigger simulation for each Executor Simulator.
-- It Compute the data processed by each task for a certain period of time while the allocated resources are fixed for one iteration, and the iteration is repeated until the amount of data processed by each tasks achieved balance.  
+![overview](/assets/overview.png)
 
-Executor Simulator
+**Simulator Launcher**
+ - For the purpose of developing simulators that it can be utilized for optimization policy, simulation results should be known before the job is executed. To do this, I implemented SimulationLauncher, which runs independently of JobLauncher and can output simulation results.
+ - Compiler: It makes a physical plan, which is a group of tasks that can be allocated in the executor, So it received query from Beam pipeline or Nexmark, and it transfer the physical plan to Plan Simulator. 
+ 
+**Plan Simulator**
+- before the start of the simulation, Container Manger, Schedule Simulator and Task Dispatcher prepare nodes and tasks.  
+	- **Container Manger**: It creates Executor Simulator according to the Node Configuration. It manages allocated resources for each tasks.  
+	- **Schedule Simulator** and **Task Dispatcher** operate the same as the Original Version of Scheduler and Task Dispatcher. they schedule the tasks and distibute the tasks to the executors.  
+- When the simulate method is called
+	- It triggers simulation for each Executor simulator.
+	- It transfer the size of data processed by each task in the Executor Simulator to the downstream tasks. 
+	- iterate until the amount of the data processed by each tasks reached balance. 
+
+**Executor Simulator**
 - It is virtual node to simulate the execution of task
 - It Calculates the time it takes to process one tuple and returns the number of tuples processed when duration is inputted from the Plan Simulator. 
 
